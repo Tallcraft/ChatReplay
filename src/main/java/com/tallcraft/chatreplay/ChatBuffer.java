@@ -7,7 +7,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.logging.Logger;
 
 public class ChatBuffer {
 
@@ -23,12 +22,12 @@ public class ChatBuffer {
 
     public void addMessage(ChatMessage message) {
         if (message != null) {
-            queue.add(message);
-            if (queueSize >= bufferSize) {
+            while (queueSize >= bufferSize) {
                 queue.remove();
-            } else {
-                queueSize++;
+                queueSize--;
             }
+            queue.add(message);
+            queueSize++;
         }
     }
 

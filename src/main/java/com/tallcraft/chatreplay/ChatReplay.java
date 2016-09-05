@@ -1,5 +1,6 @@
 package com.tallcraft.chatreplay;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
@@ -28,11 +29,13 @@ public class ChatReplay extends JavaPlugin implements Listener {
 
     @EventHandler
     public void AsyncPlayerChatEvent(AsyncPlayerChatEvent event) {
-        chatBuffer.addMessage(new ChatMessage(event.getPlayer().getDisplayName(), event.getMessage()));
+        chatBuffer.addMessage(new ChatMessage(ChatColor.stripColor(event.getPlayer().getDisplayName()), ChatColor.stripColor(event.getMessage())));
     }
 
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+        logger.info(this.getName() + ": Reloaded configuration");
+        sender.sendMessage(this.getName() + ": Reloaded configuration!");
         chatBuffer.setBufferSize(getConfig().getInt("bufferSize"));
         return true;
     }
