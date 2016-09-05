@@ -51,7 +51,6 @@ public class ChatBuffer {
             footer.setBold(true);
 
             player.spigot().sendMessage(header);
-            player.sendRawMessage("&7&l");
             TextComponent formattedMessage;
             for (ChatMessage msg : queue) {
                 formattedMessage = new TextComponent("[" + msg.getPlayerName() + "]: " + msg.getMessage());
