@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 
 public class ChatBuffer {
 
-    public static final Logger logger = Logger.getLogger("minecraft");
     private ConcurrentLinkedQueue<ChatMessage> queue;
     private int queueSize; //We store it ourselves for efficiency
     private int bufferSize; //How many messages to store + replay

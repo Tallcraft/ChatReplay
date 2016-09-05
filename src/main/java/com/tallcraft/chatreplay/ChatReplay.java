@@ -18,7 +18,9 @@ public class ChatReplay extends JavaPlugin implements Listener {
     public void onEnable() {
         this.saveDefaultConfig();
         int bufferSize = getConfig().getInt("bufferSize");
-        //TODO: sanity checks buffer-size (client limit etc)
+        if(bufferSize <= 0 ) {
+            logger.info(this.getName() + ": Invalid bufferSize " + bufferSize + "! Must be greater 0");
+        }
         chatBuffer = new ChatBuffer(bufferSize);
         getServer().getPluginManager().registerEvents(this, this);
     }
@@ -31,8 +33,8 @@ public class ChatReplay extends JavaPlugin implements Listener {
 
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-        //TODO commands
-        return false;
+        chatBuffer.setBufferSize(getConfig().getInt("bufferSize"));
+        return true;
     }
 
     @EventHandler

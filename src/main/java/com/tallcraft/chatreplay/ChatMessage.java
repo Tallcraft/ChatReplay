@@ -2,9 +2,6 @@ package com.tallcraft.chatreplay;
 
 import java.util.Date;
 
-/**
- * Created by paul on 05.09.16.
- */
 public class ChatMessage {
     private String playerName;
     private String message;
