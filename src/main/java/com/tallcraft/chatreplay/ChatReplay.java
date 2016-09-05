@@ -34,9 +34,10 @@ public class ChatReplay extends JavaPlugin implements Listener {
 
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+        reloadConfig();
+        chatBuffer.setBufferSize(getConfig().getInt("bufferSize"));
         logger.info(this.getName() + ": Reloaded configuration");
         sender.sendMessage(this.getName() + ": Reloaded configuration!");
-        chatBuffer.setBufferSize(getConfig().getInt("bufferSize"));
         return true;
     }
 

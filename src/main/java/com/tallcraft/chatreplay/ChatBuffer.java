@@ -22,7 +22,7 @@ public class ChatBuffer {
 
     public void addMessage(ChatMessage message) {
         if (message != null) {
-            while (queueSize >= bufferSize) {
+            while (queueSize > bufferSize) {
                 queue.remove();
                 queueSize--;
             }
