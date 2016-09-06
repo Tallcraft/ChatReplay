@@ -22,6 +22,10 @@ permissions:
    default: false
    children:
      chatreplay.reload: true
+     chatreplay.view: true
  chatreplay.reload:
    description: Reload plugin config
    default: false
+ chatreplay.view:
+   description: View replayed chat
+   default: true

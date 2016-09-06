@@ -19,7 +19,7 @@ public class ChatReplay extends JavaPlugin implements Listener {
     public void onEnable() {
         this.saveDefaultConfig();
         int bufferSize = getConfig().getInt("bufferSize");
-        if(bufferSize <= 0 ) {
+        if (bufferSize <= 0) {
             logger.info(this.getName() + ": Invalid bufferSize " + bufferSize + "! Must be greater 0");
         }
         chatBuffer = new ChatBuffer(bufferSize);
@@ -42,8 +42,10 @@ public class ChatReplay extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event){
-        chatBuffer.playTo(event.getPlayer());
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        if (event.getPlayer().hasPermission("chatreplay.view")) {
+            chatBuffer.playTo(event.getPlayer());
+        }
     }
 }
 
