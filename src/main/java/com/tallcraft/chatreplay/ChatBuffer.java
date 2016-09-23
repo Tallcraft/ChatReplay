@@ -14,7 +14,18 @@ public class ChatBuffer {
     private int queueSize; //We store it ourselves for efficiency
     private int bufferSize; //How many messages to store + replay
 
-    public ChatBuffer(int bufferSize) {
+    private String replayHeader;
+    private String replayFooter;
+    private String replayMsgFormat;
+    private String replayMsgHover;
+
+
+    public ChatBuffer(int bufferSize, String replayHeader, String replayFooter, String replayMsgFormat, String replayMsgHover) {
+        setReplayHeader(replayHeader);
+        setReplayFooter(replayFooter);
+        setReplayMsgFormat(replayMsgFormat);
+        setReplayMsgHover(replayMsgHover);
+
         this.bufferSize = bufferSize;
         queue = new ConcurrentLinkedQueue<ChatMessage>();
         queueSize = 0;
@@ -41,19 +52,21 @@ public class ChatBuffer {
             if (queueSize < bufferSize) {
                 displaySize = queueSize;
             }
-            TextComponent header = new TextComponent("Replaying last " + displaySize + " messages ========");
-            TextComponent footer = new TextComponent("Replay end ========================");
-            header.setColor(ChatColor.GRAY);
-            header.setBold(true);
-            footer.setColor(ChatColor.GRAY);
-            footer.setBold(true);
+
+            TextComponent header = new TextComponent(replayHeader.replace("{{msgCount}}", Integer.toString(displaySize)));
+            TextComponent footer = new TextComponent(replayFooter.replace("{{msgCount}}", Integer.toString(displaySize)));
+
+            TextComponent formattedMessage;
+            String replacedMessage = replayMsgFormat.replace("{{player}}", player.getDisplayName());
 
             player.spigot().sendMessage(header);
-            TextComponent formattedMessage;
+
             for (ChatMessage msg : queue) {
-                formattedMessage = new TextComponent("[" + msg.getPlayerName() + "]: " + msg.getMessage());
-                formattedMessage.setColor(ChatColor.GRAY);
-                formattedMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(msg.getTimestamp().toString()).create()));
+                formattedMessage = new TextComponent(replacedMessage.replace("{{message}}", msg.getMessage()));
+                formattedMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                        new ComponentBuilder(
+                                replayMsgHover.replace("{{timestamp}}", msg.getTimestamp().toString())
+                        ).create()));
 
                 player.spigot().sendMessage(formattedMessage);
             }
@@ -69,5 +82,37 @@ public class ChatBuffer {
 
     public void setBufferSize(int bufferSize) {
         this.bufferSize = bufferSize;
+    }
+
+    public String getReplayHeader() {
+        return replayHeader;
+    }
+
+    public void setReplayHeader(String replayHeader) {
+        this.replayHeader = ChatColor.translateAlternateColorCodes('&', replayHeader);
+    }
+
+    public String getReplayFooter() {
+        return replayFooter;
+    }
+
+    public void setReplayFooter(String replayFooter) {
+        this.replayFooter = ChatColor.translateAlternateColorCodes('&', replayFooter);
+    }
+
+    public String getReplayMsgFormat() {
+        return replayMsgFormat;
+    }
+
+    public void setReplayMsgFormat(String replayMsgFormat) {
+        this.replayMsgFormat = ChatColor.translateAlternateColorCodes('&', replayMsgFormat);
+    }
+
+    public String getReplayMsgHover() {
+        return replayMsgHover;
+    }
+
+    public void setReplayMsgHover(String replayMsgHover) {
+        this.replayMsgHover = ChatColor.translateAlternateColorCodes('&', replayMsgHover);
     }
 }

@@ -1,2 +1,8 @@
 ### ChatReplay Configuration
 bufferSize: 30
+
+## Formatting
+replayHeader: "&7&lReplaying last {{msgCount}} messages"
+replayFooter: "&7&lReplayed last {{msgCount}} messages"
+replayMsgFormat: "&7[{{player}}]: {{message}}"
+replayMsgHover: "{{timestamp}}"

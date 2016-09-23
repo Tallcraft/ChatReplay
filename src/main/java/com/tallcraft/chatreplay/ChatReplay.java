@@ -3,6 +3,7 @@ package com.tallcraft.chatreplay;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -22,7 +23,13 @@ public class ChatReplay extends JavaPlugin implements Listener {
         if (bufferSize <= 0) {
             logger.info(this.getName() + ": Invalid bufferSize " + bufferSize + "! Must be greater 0");
         }
-        chatBuffer = new ChatBuffer(bufferSize);
+        chatBuffer = new ChatBuffer(
+                bufferSize,
+                getConfig().getString("replayHeader"),
+                getConfig().getString("replayFooter"),
+                getConfig().getString("replayMsgFormat"),
+                getConfig().getString("replayMsgHover"));
+
         getServer().getPluginManager().registerEvents(this, this);
     }
 
@@ -35,9 +42,17 @@ public class ChatReplay extends JavaPlugin implements Listener {
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         reloadConfig();
+
         chatBuffer.setBufferSize(getConfig().getInt("bufferSize"));
+        chatBuffer.setReplayHeader(getConfig().getString("replayHeader"));
+        chatBuffer.setReplayFooter(getConfig().getString("replayFooter"));
+        chatBuffer.setReplayMsgFormat(getConfig().getString("replayMsgFormat"));
+        chatBuffer.setReplayMsgHover(getConfig().getString("replayMsgHover"));
+
         logger.info(this.getName() + ": Reloaded configuration");
-        sender.sendMessage(this.getName() + ": Reloaded configuration!");
+        if (sender instanceof Player) {
+            sender.sendMessage(this.getName() + ": Reloaded configuration!");
+        }
         return true;
     }
 
