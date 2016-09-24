@@ -1,8 +1,14 @@
-### ChatReplay Configuration
+#### ChatReplay Configuration
 bufferSize: 30
 
-## Formatting
+### Formatting
+
+## Header and footer message of replay output
+# Available variables: {{msgCount}}
 replayHeader: "&7&lReplaying last {{msgCount}} messages"
 replayFooter: "&7&lReplayed last {{msgCount}} messages"
+
+## Formatting for single messages replayed
+# Available variables: {{player}}, {{message}}, {{timestamp}}
 replayMsgFormat: "&7[{{player}}]: {{message}}"
 replayMsgHover: "{{timestamp}}"
