@@ -57,16 +57,26 @@ public class ChatBuffer {
             TextComponent footer = new TextComponent(replayFooter.replace("{{msgCount}}", Integer.toString(displaySize)));
 
             TextComponent formattedMessage;
-            String replacedMessage = replayMsgFormat.replace("{{player}}", player.getDisplayName());
+            String replacedMsgFormat;
+            String replacedMsgHover;
 
             player.spigot().sendMessage(header);
 
             for (ChatMessage msg : queue) {
-                formattedMessage = new TextComponent(replacedMessage.replace("{{message}}", msg.getMessage()));
+                replacedMsgFormat = new String(replayMsgFormat);
+                replacedMsgHover = new String(replayMsgHover);
+
+                replacedMsgFormat = replacedMsgFormat.replace("{{player}}", msg.getPlayerName());
+                replacedMsgFormat = replacedMsgFormat.replace("{{message}}", msg.getMessage());
+                replacedMsgFormat = replacedMsgFormat.replace("{{timestamp}}", msg.getTimestamp().toString());
+
+                replacedMsgHover = replacedMsgHover.replace("{{player}}", msg.getPlayerName());
+                replacedMsgHover = replacedMsgHover.replace("{{message}}", msg.getPlayerName());
+                replacedMsgHover = replacedMsgHover.replace("{{timestamp}}", msg.getTimestamp().toString());
+
+                formattedMessage = new TextComponent(replacedMsgFormat);
                 formattedMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                        new ComponentBuilder(
-                                replayMsgHover.replace("{{timestamp}}", msg.getTimestamp().toString())
-                        ).create()));
+                        new ComponentBuilder(replacedMsgHover).create()));
 
                 player.spigot().sendMessage(formattedMessage);
             }
