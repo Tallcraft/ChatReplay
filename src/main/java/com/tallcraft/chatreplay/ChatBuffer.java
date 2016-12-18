@@ -72,14 +72,15 @@ public class ChatBuffer {
                 replacedMsgFormat = new String(replayMsgFormat);
                 replacedMsgHover = new String(replayMsgHover);
 
-                replacedMsgFormat = replacedMsgFormat.replace("{{player}}", msg.getPlayerName());
-                replacedMsgFormat = replacedMsgFormat.replace("{{message}}", msg.getMessage());
-                replacedMsgFormat = replacedMsgFormat.replace("{{timestamp}}", msg.getTimestamp().toString());
-
-                replacedMsgHover = replacedMsgHover.replace("{{player}}", msg.getPlayerName());
-                replacedMsgHover = replacedMsgHover.replace("{{message}}", msg.getPlayerName());
-                replacedMsgHover = replacedMsgHover.replace("{{timestamp}}", msg.getTimestamp().toString());
-
+                try {
+                    replacedMsgFormat = replaceVariables(new String[]{msg.getPlayerName(), msg.getMessage(),
+                            msg.getTimestamp().toString()}, replacedMsgFormat);
+                    replacedMsgHover = replaceVariables(new String[]{msg.getPlayerName(), msg.getMessage(),
+                            msg.getTimestamp().toString()}, replacedMsgHover);
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                    return;
+                }
 
                 formattedMessage = new TextComponent(TextComponent.fromLegacyText(replacedMsgFormat));
                 formattedMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
@@ -91,6 +92,21 @@ public class ChatBuffer {
 
             player.spigot().sendMessage(footer);
         }
+    }
+
+    private String replaceVariables(String[] values, String str) throws IllegalArgumentException {
+        return replaceVariables(new String[]{"{{player}}", "{{message}}", "{{timestamp}}"}, values, str);
+    }
+
+    private String replaceVariables(String[] variables, String[] values, String str) throws IllegalArgumentException {
+        if (variables.length != values.length) {
+            throw new IllegalArgumentException("Arguments variables and values have to match in array-length");
+        }
+        for (int i = 0; i < variables.length; i++) {
+            str = str.replace(variables[i], values[i]);
+        }
+
+        return str;
     }
 
     public int getBufferSize() {
