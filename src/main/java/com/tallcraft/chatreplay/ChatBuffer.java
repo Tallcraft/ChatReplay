@@ -53,8 +53,14 @@ public class ChatBuffer {
                 displaySize = queueSize;
             }
 
-            TextComponent header = new TextComponent(replayHeader.replace("{{msgCount}}", Integer.toString(displaySize)));
-            TextComponent footer = new TextComponent(replayFooter.replace("{{msgCount}}", Integer.toString(displaySize)));
+            TextComponent header = new TextComponent(
+                    TextComponent.fromLegacyText(
+                            replayHeader.replace("{{msgCount}}", Integer.toString(displaySize)))
+            );
+            TextComponent footer = new TextComponent(
+                    TextComponent.fromLegacyText(
+                            replayFooter.replace("{{msgCount}}", Integer.toString(displaySize)))
+            );
 
             TextComponent formattedMessage;
             String replacedMsgFormat;
@@ -74,7 +80,8 @@ public class ChatBuffer {
                 replacedMsgHover = replacedMsgHover.replace("{{message}}", msg.getPlayerName());
                 replacedMsgHover = replacedMsgHover.replace("{{timestamp}}", msg.getTimestamp().toString());
 
-                formattedMessage = new TextComponent(replacedMsgFormat);
+
+                formattedMessage = new TextComponent(TextComponent.fromLegacyText(replacedMsgFormat));
                 formattedMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                         new ComponentBuilder(replacedMsgHover).create()));
 
