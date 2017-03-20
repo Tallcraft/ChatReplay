@@ -6,7 +6,7 @@
 
     <groupId>com.tallcraft</groupId>
     <artifactId>ChatReplay</artifactId>
-    <version>1.2.4-SNAPSHOT</version>
+    <version>1.2.5-SNAPSHOT</version>
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
