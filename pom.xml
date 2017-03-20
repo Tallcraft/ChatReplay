@@ -15,10 +15,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.mcstats.bukkit</groupId>
-            <artifactId>metrics</artifactId>
-            <version>R8-SNAPSHOT</version>
-            <scope>compile</scope>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>1.1</version>
         </dependency>
     </dependencies>
     <repositories>
@@ -27,8 +26,8 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
-            <id>Plugin Metrics</id>
-            <url>http://repo.mcstats.org/content/repositories/public</url>
+            <id>bstats-repo</id>
+            <url>http://repo.bstats.org/content/repositories/releases/</url>
         </repository>
     </repositories>
     <profiles>
@@ -57,12 +56,12 @@
                 <configuration>
                     <artifactSet>
                         <includes>
-                            <include>org.mcstats.*:*</include>
+                            <include>org.bstats:*</include>
                         </includes>
                     </artifactSet>
                     <relocations>
                         <relocation>
-                            <pattern>org.mcstats</pattern>
+                            <pattern>org.bstats</pattern>
                             <shadedPattern>com.tallcraft.chatreplay</shadedPattern>
                         </relocation>
                     </relocations>

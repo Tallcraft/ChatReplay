@@ -9,9 +9,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.mcstats.Metrics;
+import org.bstats.Metrics;
 
-import java.io.IOException;
 import java.util.logging.Logger;
 
 public class ChatReplay extends JavaPlugin implements Listener {
@@ -22,12 +21,7 @@ public class ChatReplay extends JavaPlugin implements Listener {
     public void onEnable() {
 
         //Metrics powered by mcstats.org
-        try {
-            Metrics metrics = new Metrics(this);
-            metrics.start();
-        } catch (IOException e) {
-            logger.warning(this.getName() + ": Sending metrics to mcstats.org failed");
-        }
+        Metrics metrics = new Metrics(this);
 
         this.saveDefaultConfig();
         int bufferSize = getConfig().getInt("bufferSize");
