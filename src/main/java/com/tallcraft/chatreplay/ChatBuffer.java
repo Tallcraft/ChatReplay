@@ -66,7 +66,7 @@ public class ChatBuffer {
             String replacedMsgFormat;
             String replacedMsgHover;
 
-            player.spigot().sendMessage(header);
+            player.sendMessage(header.toLegacyText());
 
             for (ChatMessage msg : queue) {
                 replacedMsgFormat = new String(replayMsgFormat);
@@ -86,11 +86,11 @@ public class ChatBuffer {
                 formattedMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                         new ComponentBuilder(replacedMsgHover).create()));
 
-                player.spigot().sendMessage(formattedMessage);
+                player.sendMessage(formattedMessage.toLegacyText());
             }
 
 
-            player.spigot().sendMessage(footer);
+            player.sendMessage(footer.toLegacyText());
         }
     }
 
