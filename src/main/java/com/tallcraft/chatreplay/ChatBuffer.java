@@ -86,7 +86,7 @@ public class ChatBuffer {
                 formattedMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                         new ComponentBuilder(replacedMsgHover).create()));
 
-                player.sendMessage(formattedMessage.toLegacyText());
+                player.spigot().sendMessage(formattedMessage);
             }
 
 
