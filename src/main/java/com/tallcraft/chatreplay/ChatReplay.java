@@ -9,18 +9,18 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bstats.Metrics;
+import org.bstats.bukkit.Metrics;
 
 import java.util.logging.Logger;
 
 public class ChatReplay extends JavaPlugin implements Listener {
-    public static final Logger logger = Logger.getLogger("minecraft");
+    private static final Logger logger = Logger.getLogger("minecraft");
     private ChatBuffer chatBuffer;
 
     @Override
     public void onEnable() {
 
-        //Metrics powered by mcstats.org
+        //Metrics powered by bstats.org
         Metrics metrics = new Metrics(this);
 
         this.saveDefaultConfig();
