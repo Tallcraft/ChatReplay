@@ -1,4 +1,4 @@
-#ChatReplay
+# ChatReplay
 **ChatReplay replays the most recent chat-history when a player joins.**
 
 This allows players to quickly catch-up on what happened in chat before they joined the server.
