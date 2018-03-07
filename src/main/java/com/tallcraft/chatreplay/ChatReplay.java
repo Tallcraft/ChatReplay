@@ -24,16 +24,8 @@ public class ChatReplay extends JavaPlugin implements Listener {
         Metrics metrics = new Metrics(this);
 
         this.saveDefaultConfig();
-        int bufferSize = getConfig().getInt("bufferSize");
-        if (bufferSize <= 0) {
-            logger.info(this.getName() + ": Invalid bufferSize " + bufferSize + "! Must be greater 0");
-        }
-        chatBuffer = new ChatBuffer(
-                bufferSize,
-                getConfig().getString("replayHeader"),
-                getConfig().getString("replayFooter"),
-                getConfig().getString("replayMsgFormat"),
-                getConfig().getString("replayMsgHover"));
+
+        configureBuffer();
 
         getServer().getPluginManager().registerEvents(this, this);
     }
@@ -48,11 +40,7 @@ public class ChatReplay extends JavaPlugin implements Listener {
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         reloadConfig();
 
-        chatBuffer.setBufferSize(getConfig().getInt("bufferSize"));
-        chatBuffer.setReplayHeader(getConfig().getString("replayHeader"));
-        chatBuffer.setReplayFooter(getConfig().getString("replayFooter"));
-        chatBuffer.setReplayMsgFormat(getConfig().getString("replayMsgFormat"));
-        chatBuffer.setReplayMsgHover(getConfig().getString("replayMsgHover"));
+        configureBuffer();
 
         logger.info(this.getName() + ": Reloaded configuration");
         if (sender instanceof Player) {
@@ -65,6 +53,37 @@ public class ChatReplay extends JavaPlugin implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         if (event.getPlayer().hasPermission("chatreplay.view")) {
             chatBuffer.playTo(event.getPlayer());
+        }
+    }
+
+    /**
+     * Update existing chatBuffer or create a new one with config options
+     */
+    private void configureBuffer() {
+        int bufferSize = getConfig().getInt("bufferSize");
+        int viewSize = getConfig().getInt("bufferSize");
+
+        if (bufferSize <= 0) {
+            throw new IllegalArgumentException(this.getName() + ": Invalid bufferSize " + bufferSize + "! Must be greater 0");
+        }
+
+        if (viewSize > bufferSize) {
+            throw new IllegalArgumentException(this.getName() + ": Invalid viewSize. Can not be smaller than total buffer size");
+        }
+
+        if(chatBuffer == null) {
+            chatBuffer = new ChatBuffer(
+                    bufferSize,
+                    getConfig().getString("replayHeader"),
+                    getConfig().getString("replayFooter"),
+                    getConfig().getString("replayMsgFormat"),
+                    getConfig().getString("replayMsgHover"));
+        } else {
+            chatBuffer.setBufferSize(getConfig().getInt("bufferSize"));
+            chatBuffer.setReplayHeader(getConfig().getString("replayHeader"));
+            chatBuffer.setReplayFooter(getConfig().getString("replayFooter"));
+            chatBuffer.setReplayMsgFormat(getConfig().getString("replayMsgFormat"));
+            chatBuffer.setReplayMsgHover(getConfig().getString("replayMsgHover"));
         }
     }
 }
