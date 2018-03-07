@@ -6,18 +6,27 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.logging.Logger;
 
 public class ChatBuffer {
 
     private ConcurrentLinkedQueue<ChatMessage> queue;
-    private int queueSize; //We store it ourselves for efficiency
-    private int bufferSize; //How many messages to store + replay
+    private int queueSize; // How many messages are currently stored
+    private int bufferSize; // Max size, How many messages to store + replay
+
+    private HashMap<UUID, Integer> playerIndex; // Store pos of last shown messages to player
 
     private String replayHeader;
     private String replayFooter;
     private String replayMsgFormat;
     private String replayMsgHover;
+
+    private static final Logger logger = Logger.getLogger("minecraft"); //FIXME remove
 
 
     public ChatBuffer(int bufferSize, String replayHeader, String replayFooter, String replayMsgFormat, String replayMsgHover) {
@@ -27,8 +36,10 @@ public class ChatBuffer {
         setReplayMsgHover(replayMsgHover);
 
         this.bufferSize = bufferSize;
-        queue = new ConcurrentLinkedQueue<ChatMessage>();
+        queue = new ConcurrentLinkedQueue<>();
         queueSize = 0;
+
+        playerIndex = new HashMap<>();
     }
 
     public void addMessage(ChatMessage message) {
@@ -36,6 +47,7 @@ public class ChatBuffer {
             while (queueSize > bufferSize) {
                 queue.remove();
                 queueSize--;
+                modifyPlayerIndex(-1);
             }
             queue.add(message);
             queueSize++;
@@ -91,6 +103,10 @@ public class ChatBuffer {
 
 
             player.sendMessage(footer.toLegacyText());
+            player.sendMessage("Your index: " + Integer.toString(getPlayerIndex(player)));
+            player.sendMessage("MORE (TODO CLICK)");
+
+            setPlayerIndex(player, 5); // TODO: testing
         }
     }
 
@@ -107,6 +123,32 @@ public class ChatBuffer {
         }
 
         return str;
+    }
+
+    private int getPlayerIndex(Player player) {
+        UUID uuid = player.getUniqueId();
+        if(playerIndex.containsKey(uuid)) {
+            return playerIndex.get(uuid);
+        }
+        return 0;
+    }
+
+    private void setPlayerIndex(Player player, int index) {
+        playerIndex.put(player.getUniqueId(), index);
+    }
+
+    private void modifyPlayerIndex(int modifier) {
+        for(Map.Entry<UUID, Integer> entry : playerIndex.entrySet()) {
+            int index = entry.getValue();
+            int result = index + modifier;
+            if(result < 0) {
+                // If index becomes invalid remove entry
+                playerIndex.remove(entry.getKey());
+            } else {
+                // Otherwise apply modifier
+                entry.setValue(result);
+            }
+        }
     }
 
     public int getBufferSize() {

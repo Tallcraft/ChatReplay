@@ -1,5 +1,11 @@
 #### ChatReplay Configuration
-bufferSize: 70
+
+# How many of the most recent chat messages to store in total
+bufferSize: 500
+
+# How many messages to show players at once
+# Vanilla Minecraft Client has a history limit of around 100
+viewSize: 70
 
 ### Formatting
 
