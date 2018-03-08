@@ -8,7 +8,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Logger;
 
 public class ChatBuffer {
@@ -17,28 +16,30 @@ public class ChatBuffer {
     private int maxBufferSize; // Max size, How many messages to store + replay
 
     private HashMap<UUID, Integer> playerIndex; // Store pos of last shown messages to player
-    private int viewSize;
+    private int viewSize; // How many messages to show user at once
 
     private String replayHeader;
     private String replayFooter;
     private String replayMsgFormat;
     private String replayMsgHover;
+    private String navigateHistoryButtonText;
 
     private static final Logger logger = Logger.getLogger("minecraft"); //FIXME remove
 
 
-    public ChatBuffer(int maxBufferSize, int viewSize, String replayHeader, String replayFooter, String replayMsgFormat, String replayMsgHover) {
+    public ChatBuffer(int maxBufferSize, int viewSize, String replayHeader, String replayFooter, String replayMsgFormat, String replayMsgHover, String navigateHistoryButtonText) {
         setReplayHeader(replayHeader);
         setReplayFooter(replayFooter);
         setReplayMsgFormat(replayMsgFormat);
         setReplayMsgHover(replayMsgHover);
+        setNavigateHistoryButtonText(navigateHistoryButtonText);
 
         this.maxBufferSize = maxBufferSize;
-        buffer = Collections.synchronizedList(new ArrayList<ChatMessage>());
         this.viewSize = viewSize;
-        bufferSize = 0;
 
-        playerIndex = new HashMap<>();
+        this.bufferSize = 0;
+        this.playerIndex = new HashMap<>();
+        this.buffer = Collections.synchronizedList(new ArrayList<ChatMessage>());
     }
 
     public void addMessage(ChatMessage message) {
@@ -109,15 +110,12 @@ public class ChatBuffer {
 
         // Only show button when there are messages left
         if(startIndex != 0) {
-            TextComponent showOlder = new TextComponent("SHOW OLDER");
-            showOlder.setColor(ChatColor.GRAY);
-            showOlder.setBold(true);
+            TextComponent showOlder = new TextComponent(TextComponent.fromLegacyText(navigateHistoryButtonText));
             showOlder.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/chatreplay more"));
             player.spigot().sendMessage(showOlder);
         }
 
-
-
+        // Update player index for pagination
         modifyPlayerIndex(player.getUniqueId(), getPlayerIndex(player.getUniqueId()), -replayedCounter);
 
         logger.info("Replayed player '" + player.getDisplayName() + "' playerIndex: " + getPlayerIndex(player.getUniqueId()) + " replayedCounter: " + replayedCounter);
@@ -216,5 +214,10 @@ public class ChatBuffer {
 
     public void setReplayMsgHover(String replayMsgHover) {
         this.replayMsgHover = ChatColor.translateAlternateColorCodes('&', replayMsgHover);
+    }
+
+    public void setNavigateHistoryButtonText(String navigateHistoryButtonText) {
+        this.navigateHistoryButtonText = ChatColor.translateAlternateColorCodes('&',
+                navigateHistoryButtonText);
     }
 }

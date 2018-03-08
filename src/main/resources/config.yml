@@ -18,3 +18,6 @@ replayFooter: "&7&lReplayed last {{msgCount}} messages"
 # Available variables: {{player}}, {{message}}, {{timestamp}}
 replayMsgFormat: "&7[{{player}}]: {{message}}"
 replayMsgHover: "{{timestamp}}"
+
+# Button to navigate chat history
+navigateHistoryButtonText: "&7&nSHOW OLDER"
