@@ -58,6 +58,9 @@ public class ChatReplay extends JavaPlugin implements Listener {
                 "\n" +
                 " Messages\n" +
                 "\n" +
+                "   Format of timestamp string. Do not use color / formatting codes.\n" +
+                "     timestampFormat\n" +
+                "\n" +
                 "   Header and footer message of replay output\n" +
                 "   Available variables: {{msgCount}}\n" +
                 "     replayHeader\n" +
@@ -75,6 +78,7 @@ public class ChatReplay extends JavaPlugin implements Listener {
         defaultConfig.set("replayOnLogin", true);
         defaultConfig.set("bufferSize", 500);
         defaultConfig.set("viewSize", 70);
+        defaultConfig.set("timestampFormat", "yyyy-MM-dd HH:mm");
         defaultConfig.set("replayHeader", "&7&lReplaying last {{msgCount}} messages");
         defaultConfig.set("replayFooter", "&7&lReplayed last {{msgCount}} messages");
         defaultConfig.set("replayMsgFormat", "&7[{{player}}]: {{message}}");
@@ -167,6 +171,7 @@ public class ChatReplay extends JavaPlugin implements Listener {
             throw new IllegalArgumentException(this.getName() + ": Invalid viewSize. Can not be smaller than total buffer size");
         }
 
+        String timestampFormat = config.getString("timestampFormat");
         String replayHeader = config.getString("replayHeader");
         String replayFooter = config.getString("replayFooter");
         String replayMsgFormat = config.getString("replayMsgFormat");
@@ -177,6 +182,7 @@ public class ChatReplay extends JavaPlugin implements Listener {
             chatBuffer = new ChatBuffer(
                     bufferSize,
                     viewSize,
+                    timestampFormat,
                     replayHeader,
                     replayFooter,
                     replayMsgFormat,
@@ -185,6 +191,7 @@ public class ChatReplay extends JavaPlugin implements Listener {
         } else {
             chatBuffer.setBufferSize(bufferSize);
             chatBuffer.setViewSize(viewSize);
+            chatBuffer.setTimestampFormat(timestampFormat);
             chatBuffer.setReplayHeader(replayHeader);
             chatBuffer.setReplayFooter(replayFooter);
             chatBuffer.setReplayMsgFormat(replayMsgFormat);

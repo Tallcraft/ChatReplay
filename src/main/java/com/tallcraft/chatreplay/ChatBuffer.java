@@ -24,12 +24,13 @@ public class ChatBuffer {
     private String navigateHistoryButtonText;
 
 
-    public ChatBuffer(int maxBufferSize, int viewSize, String replayHeader, String replayFooter, String replayMsgFormat, String replayMsgHover, String navigateHistoryButtonText) {
+    public ChatBuffer(int maxBufferSize, int viewSize, String timestampFormat, String replayHeader, String replayFooter, String replayMsgFormat, String replayMsgHover, String navigateHistoryButtonText) {
         setReplayHeader(replayHeader);
         setReplayFooter(replayFooter);
         setReplayMsgFormat(replayMsgFormat);
         setReplayMsgHover(replayMsgHover);
         setNavigateHistoryButtonText(navigateHistoryButtonText);
+        setTimestampFormat(timestampFormat);
 
         this.maxBufferSize = maxBufferSize;
         this.viewSize = viewSize;
@@ -89,9 +90,9 @@ public class ChatBuffer {
             replacedMsgHover = new String(replayMsgHover);
             try {
                 replacedMsgFormat = replaceVariables(new String[]{msg.getPlayerName(), msg.getMessage(),
-                        msg.getTimestamp().toString()}, replacedMsgFormat);
+                        msg.getTimestampFormatted()}, replacedMsgFormat);
                 replacedMsgHover = replaceVariables(new String[]{msg.getPlayerName(), msg.getMessage(),
-                        msg.getTimestamp().toString()}, replacedMsgHover);
+                        msg.getTimestampFormatted()}, replacedMsgHover);
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
                 return;
@@ -106,7 +107,7 @@ public class ChatBuffer {
         player.sendMessage(footer.toLegacyText());
 
         // Only show button when there are messages left
-        if(startIndex != 0) {
+        if (startIndex != 0) {
             TextComponent showOlder = new TextComponent(TextComponent.fromLegacyText(navigateHistoryButtonText));
             showOlder.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/chatreplay more"));
             player.spigot().sendMessage(showOlder);
@@ -118,6 +119,7 @@ public class ChatBuffer {
 //        logger.info("Replayed player '" + player.getDisplayName() + "' playerIndex: " + getPlayerIndex(player.getUniqueId()) + " replayedCounter: " + replayedCounter);
     }
 
+    // TODO: move variable replacement to ChatMessage class
     private String replaceVariables(String[] values, String str) throws IllegalArgumentException {
         return replaceVariables(new String[]{"{{player}}", "{{message}}", "{{timestamp}}"}, values, str);
     }
@@ -216,5 +218,9 @@ public class ChatBuffer {
     public void setNavigateHistoryButtonText(String navigateHistoryButtonText) {
         this.navigateHistoryButtonText = ChatColor.translateAlternateColorCodes('&',
                 navigateHistoryButtonText);
+    }
+
+    public void setTimestampFormat(String format) {
+        ChatMessage.timestampFormat = format;
     }
 }

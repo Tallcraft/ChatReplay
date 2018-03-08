@@ -1,11 +1,14 @@
 package com.tallcraft.chatreplay;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ChatMessage {
     private String playerName;
     private String message;
     private Date timestamp;
+
+    public static String timestampFormat = "yyyy-MM-dd HH:mm";
 
     public ChatMessage(String playerName, String message) {
         this.playerName = playerName;
@@ -21,6 +24,16 @@ public class ChatMessage {
 
     public Date getTimestamp() {
         return timestamp;
+    }
+
+    public String getTimestampFormatted() {
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat(timestampFormat);
+            return formatter.format(this.timestamp);
+        } catch(NullPointerException | IllegalArgumentException ex) {
+            // In case invalid formatStr is provided, fall back to native toString
+            return this.timestamp.toString();
+        }
     }
 
     public void setTimestamp(Date timestamp) {
