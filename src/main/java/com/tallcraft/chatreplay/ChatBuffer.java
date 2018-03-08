@@ -8,7 +8,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 public class ChatBuffer {
     private List buffer;
@@ -23,8 +22,6 @@ public class ChatBuffer {
     private String replayMsgFormat;
     private String replayMsgHover;
     private String navigateHistoryButtonText;
-
-    private static final Logger logger = Logger.getLogger("minecraft"); //FIXME remove
 
 
     public ChatBuffer(int maxBufferSize, int viewSize, String replayHeader, String replayFooter, String replayMsgFormat, String replayMsgHover, String navigateHistoryButtonText) {
@@ -81,7 +78,7 @@ public class ChatBuffer {
             startIndex = 0;
         }
 
-        logger.info("Replaying player '" + player.getDisplayName() + "' playerIndex: " + playerIndex +  " startIndex: " + startIndex + " bufferSize: " + bufferSize);
+//        logger.info("Replaying player '" + player.getDisplayName() + "' playerIndex: " + playerIndex +  " startIndex: " + startIndex + " bufferSize: " + bufferSize);
 
 
         int replayedCounter = 0;
@@ -118,7 +115,7 @@ public class ChatBuffer {
         // Update player index for pagination
         modifyPlayerIndex(player.getUniqueId(), getPlayerIndex(player.getUniqueId()), -replayedCounter);
 
-        logger.info("Replayed player '" + player.getDisplayName() + "' playerIndex: " + getPlayerIndex(player.getUniqueId()) + " replayedCounter: " + replayedCounter);
+//        logger.info("Replayed player '" + player.getDisplayName() + "' playerIndex: " + getPlayerIndex(player.getUniqueId()) + " replayedCounter: " + replayedCounter);
     }
 
     private String replaceVariables(String[] values, String str) throws IllegalArgumentException {
