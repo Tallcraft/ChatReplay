@@ -103,29 +103,30 @@ public class ChatReplay extends JavaPlugin implements Listener {
             return false;
         }
 
-        if (sender instanceof Player && sender.hasPermission("chatreplay.view")) {
-
-
-            if (!sender.hasPermission("chatreplay.view")) {
-                sender.sendMessage(cmd.getPermissionMessage());
-                return true;
-            }
-
+        // Chat replay commands are only supported for players
+        if (sender instanceof Player) {
 
             if (args[0].equalsIgnoreCase("play")) {
+                if (!sender.hasPermission("chatreplay.play")) {
+                    sender.sendMessage(cmd.getPermissionMessage());
+                    return true;
+                }
                 chatBuffer.resetPlayer((Player) sender);
                 chatBuffer.playTo((Player) sender);
                 return true;
             }
 
             if (args[0].equalsIgnoreCase("more")) {
+                if (!sender.hasPermission("chatreplay.more")) {
+                    sender.sendMessage(cmd.getPermissionMessage());
+                    return true;
+                }
                 chatBuffer.playTo((Player) sender);
                 return true;
             }
         }
 
         if (args[0].equalsIgnoreCase("reload")) {
-
             if (!sender.hasPermission("chatreplay.reload")) {
                 sender.sendMessage(cmd.getPermissionMessage());
                 return true;
@@ -147,12 +148,10 @@ public class ChatReplay extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (player.hasPermission("chatreplay.view")) {
-            chatBuffer.resetPlayer(player);
+        chatBuffer.resetPlayer(player);
 
-            if(config.getBoolean("replayOnLogin")) {
-                chatBuffer.playTo(event.getPlayer());
-            }
+        if (config.getBoolean("replayOnLogin") && player.hasPermission("chatreplay.playlogin")) {
+            chatBuffer.playTo(event.getPlayer());
         }
     }
 

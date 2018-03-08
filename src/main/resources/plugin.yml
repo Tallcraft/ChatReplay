@@ -26,5 +26,18 @@ permissions:
    description: Reload plugin config
    default: false
  chatreplay.view:
-   description: View replayed chat
+   description: View replayed chat including history on login and via command
    default: true
+   children:
+     chatreplay.play: true
+     chatreplay.more: true
+     chatreplay.playlogin: true
+ chatreplay.play:
+   description: View most recent chat
+   default: false
+ chatreplay.more:
+   description: View older chat messages
+   default: false
+ chatreplay.playlogin:
+   description: Replay chat on login
+   default: false
