@@ -9,7 +9,7 @@ database: false
 commands:
  chatreplay:
     description: Reload config
-    usage: /chatreplay <play|reload>
+    usage: /chatreplay <play|more|reload>
     permission: chatreplay.reload
 permissions:
  chatreplay.*:

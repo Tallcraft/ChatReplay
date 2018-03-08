@@ -1,6 +1,7 @@
 package com.tallcraft.chatreplay;
 
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -106,7 +107,16 @@ public class ChatBuffer {
 
         player.sendMessage(footer.toLegacyText());
 
-        player.sendMessage("SHOW OLDER (TODO CLICK)"); // TODO
+        // Only show button when there are messages left
+        if(startIndex != 0) {
+            TextComponent showOlder = new TextComponent("SHOW OLDER");
+            showOlder.setColor(ChatColor.GRAY);
+            showOlder.setBold(true);
+            showOlder.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/chatreplay more"));
+            player.spigot().sendMessage(showOlder);
+        }
+
+
 
         modifyPlayerIndex(player.getUniqueId(), getPlayerIndex(player.getUniqueId()), -replayedCounter);
 

@@ -28,8 +28,8 @@ public class ChatReplay extends JavaPlugin implements Listener {
         configureBuffer();
 
         // FIXME DEBUG
-        for(int i = 0; i < 10; i++) {
-            chatBuffer.addMessage(new ChatMessage("Notch", Integer.toString(i+1)));
+        for (int i = 0; i < 500; i++) {
+            chatBuffer.addMessage(new ChatMessage("Notch", Integer.toString(i + 1)));
         }
 
         getServer().getPluginManager().registerEvents(this, this);
@@ -49,9 +49,16 @@ public class ChatReplay extends JavaPlugin implements Listener {
             return false;
         }
 
-        if (args[0].equalsIgnoreCase("play") && sender instanceof Player) {
-            chatBuffer.playTo((Player) sender);
-            return true;
+        if (sender instanceof Player) {
+            if (args[0].equalsIgnoreCase("play")) {
+                chatBuffer.resetPlayer((Player) sender);
+                chatBuffer.playTo((Player) sender);
+            }
+
+            if (args[0].equalsIgnoreCase("more")) {
+                chatBuffer.playTo((Player) sender);
+                return true;
+            }
         }
 
         if (args[0].equalsIgnoreCase("reload")) {
