@@ -59,6 +59,7 @@ public class ChatReplay extends JavaPlugin implements Listener {
                 " Messages\n" +
                 "\n" +
                 "   Format of timestamp string. Do not use color / formatting codes.\n" +
+                "   Format instructions: https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html\n" +
                 "     timestampFormat\n" +
                 "\n" +
                 "   Header and footer message of replay output\n" +
