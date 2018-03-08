@@ -48,6 +48,9 @@ public class ChatReplay extends JavaPlugin implements Listener {
 
         config.options().header("ChatReplay Configuration\n" +
                 "\n" +
+                " Should messages be automatically re-played on login?\n" +
+                "   replayOnLogin\n" +
+                "\n" +
                 " Chat Buffer Options:\n" +
                 "\n" +
                 "   bufferSize: How many of the most recent chat messages to store in total\n" +
@@ -69,6 +72,7 @@ public class ChatReplay extends JavaPlugin implements Listener {
                 "      navigateHistoryButtonText");
 
         MemoryConfiguration defaultConfig = new MemoryConfiguration();
+        defaultConfig.set("replayOnLogin", true);
         defaultConfig.set("bufferSize", 500);
         defaultConfig.set("viewSize", 70);
         defaultConfig.set("replayHeader", "&7&lReplaying last {{msgCount}} messages");
@@ -123,6 +127,7 @@ public class ChatReplay extends JavaPlugin implements Listener {
                 return true;
             }
             reloadConfig();
+            initConfig();
             configureBuffer();
 
             logger.info(this.getName() + ": Reloaded configuration");
@@ -140,7 +145,10 @@ public class ChatReplay extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
         if (player.hasPermission("chatreplay.view")) {
             chatBuffer.resetPlayer(player);
-            chatBuffer.playTo(event.getPlayer());
+
+            if(config.getBoolean("replayOnLogin")) {
+                chatBuffer.playTo(event.getPlayer());
+            }
         }
     }
 
