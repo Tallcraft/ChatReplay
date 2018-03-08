@@ -8,9 +8,8 @@ main: com.tallcraft.chatreplay.ChatReplay
 database: false
 commands:
  chatreplay:
-    description: Reload config
     usage: /chatreplay <play|more|reload>
-    permission: chatreplay.reload
+    permission-message: You do not have permission to use this command.
 permissions:
  chatreplay.*:
    description: All permissions for ChatReplay

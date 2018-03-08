@@ -27,10 +27,10 @@ public class ChatReplay extends JavaPlugin implements Listener {
 
         configureBuffer();
 
-        // FIXME DEBUG
-        for (int i = 0; i < 500; i++) {
-            chatBuffer.addMessage(new ChatMessage("Notch", Integer.toString(i + 1)));
-        }
+        // Insert messages for testing
+//        for (int i = 0; i < 500; i++) {
+//            chatBuffer.addMessage(new ChatMessage("Notch", Integer.toString(i + 1)));
+//        }
 
         getServer().getPluginManager().registerEvents(this, this);
     }
@@ -49,10 +49,19 @@ public class ChatReplay extends JavaPlugin implements Listener {
             return false;
         }
 
-        if (sender instanceof Player) {
+        if (sender instanceof Player && sender.hasPermission("chatreplay.view")) {
+
+
+            if(!sender.hasPermission("chatreplay.view")) {
+                sender.sendMessage(cmd.getPermissionMessage());
+                return true;
+            }
+
+
             if (args[0].equalsIgnoreCase("play")) {
                 chatBuffer.resetPlayer((Player) sender);
                 chatBuffer.playTo((Player) sender);
+                return true;
             }
 
             if (args[0].equalsIgnoreCase("more")) {
@@ -62,6 +71,11 @@ public class ChatReplay extends JavaPlugin implements Listener {
         }
 
         if (args[0].equalsIgnoreCase("reload")) {
+
+            if(!sender.hasPermission("chatreplay.reload")) {
+                sender.sendMessage(cmd.getPermissionMessage());
+                return true;
+            }
             reloadConfig();
             configureBuffer();
 
@@ -73,14 +87,6 @@ public class ChatReplay extends JavaPlugin implements Listener {
         }
 
         return false;
-    }
-
-    private void showUsage(CommandSender sender) {
-        if (sender instanceof Player) {
-            sender.sendMessage("Usage : /" + this.getName() + " <play|reload>");
-        } else {
-            logger.info(this.getName() + ": Usage: + " + this.getName() + " reload");
-        }
     }
 
     @EventHandler
