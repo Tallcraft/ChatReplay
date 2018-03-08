@@ -6,20 +6,17 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Logger;
 
 public class ChatBuffer {
-
-    private ConcurrentLinkedQueue<ChatMessage> queue;
-    private int queueSize; // How many messages are currently stored
-    private int bufferSize; // Max size, How many messages to store + replay
+    private List buffer;
+    private int bufferSize; // How many messages are currently stored
+    private int maxBufferSize; // Max size, How many messages to store + replay
 
     private HashMap<UUID, Integer> playerIndex; // Store pos of last shown messages to player
+    private int viewSize;
 
     private String replayHeader;
     private String replayFooter;
@@ -29,85 +26,91 @@ public class ChatBuffer {
     private static final Logger logger = Logger.getLogger("minecraft"); //FIXME remove
 
 
-    public ChatBuffer(int bufferSize, String replayHeader, String replayFooter, String replayMsgFormat, String replayMsgHover) {
+    public ChatBuffer(int maxBufferSize, int viewSize, String replayHeader, String replayFooter, String replayMsgFormat, String replayMsgHover) {
         setReplayHeader(replayHeader);
         setReplayFooter(replayFooter);
         setReplayMsgFormat(replayMsgFormat);
         setReplayMsgHover(replayMsgHover);
 
-        this.bufferSize = bufferSize;
-        queue = new ConcurrentLinkedQueue<>();
-        queueSize = 0;
+        this.maxBufferSize = maxBufferSize;
+        buffer = Collections.synchronizedList(new ArrayList<ChatMessage>());
+        this.viewSize = viewSize;
+        bufferSize = 0;
 
         playerIndex = new HashMap<>();
     }
 
     public void addMessage(ChatMessage message) {
         if (message != null) {
-            while (queueSize > bufferSize) {
-                queue.remove();
-                queueSize--;
-                modifyPlayerIndex(-1);
+            while (bufferSize > maxBufferSize) {
+                buffer.remove(0);
+                bufferSize--;
+                updatePlayerIndexes(-1);
             }
-            queue.add(message);
-            queueSize++;
+            buffer.add(message);
+            bufferSize++;
         }
     }
 
-    private ConcurrentLinkedQueue<ChatMessage> getQueue() {
-        return this.queue;
-    }
 
     public void playTo(Player player) {
-        if (queueSize > 0) { //Only replay if there is data
-            int displaySize = bufferSize;
-            if (queueSize < bufferSize) {
-                displaySize = queueSize;
-            }
-
-            TextComponent header = new TextComponent(
-                    TextComponent.fromLegacyText(
-                            replayHeader.replace("{{msgCount}}", Integer.toString(displaySize)))
-            );
-            TextComponent footer = new TextComponent(
-                    TextComponent.fromLegacyText(
-                            replayFooter.replace("{{msgCount}}", Integer.toString(displaySize)))
-            );
-
-            TextComponent formattedMessage;
-            String replacedMsgFormat;
-            String replacedMsgHover;
-
-            player.sendMessage(header.toLegacyText());
-
-            for (ChatMessage msg : queue) {
-                replacedMsgFormat = new String(replayMsgFormat);
-                replacedMsgHover = new String(replayMsgHover);
-
-                try {
-                    replacedMsgFormat = replaceVariables(new String[]{msg.getPlayerName(), msg.getMessage(),
-                            msg.getTimestamp().toString()}, replacedMsgFormat);
-                    replacedMsgHover = replaceVariables(new String[]{msg.getPlayerName(), msg.getMessage(),
-                            msg.getTimestamp().toString()}, replacedMsgHover);
-                } catch (IllegalArgumentException e) {
-                    e.printStackTrace();
-                    return;
-                }
-
-                formattedMessage = new TextComponent(TextComponent.fromLegacyText(replacedMsgFormat));
-                formattedMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                        new ComponentBuilder(replacedMsgHover).create()));
-
-                player.spigot().sendMessage(formattedMessage);
-            }
-
-
-            player.sendMessage(footer.toLegacyText());
-            player.sendMessage("Your index: " + Integer.toString(getPlayerIndex(player)));
-            player.sendMessage("MORE (TODO CLICK)");
-
-            setPlayerIndex(player, 5); // TODO: testing
+        if (bufferSize == 0) {//Only replay if there is data
+            return;
         }
+
+        TextComponent header = new TextComponent(
+                TextComponent.fromLegacyText(
+                        replayHeader.replace("{{msgCount}}", Integer.toString(viewSize))) // FIXME: should be replayedCounter instead
+        );
+        TextComponent footer = new TextComponent(
+                TextComponent.fromLegacyText(
+                        replayFooter.replace("{{msgCount}}", Integer.toString(viewSize))) // FIXME: Should be replayedCounter instead
+        );
+
+        TextComponent formattedMessage;
+        String replacedMsgFormat;
+        String replacedMsgHover;
+
+        player.sendMessage(header.toLegacyText());
+
+        int playerIndex = getPlayerIndex(player);
+        int startIndex = playerIndex - (viewSize - 1);
+        if (startIndex < 0) {
+            startIndex = 0;
+        }
+
+        logger.info("Replaying player '" + player.getDisplayName() + "' playerIndex: " + playerIndex +  " startIndex: " + startIndex + " bufferSize: " + bufferSize);
+
+
+        int replayedCounter = 0;
+        for (int i = startIndex; i < bufferSize && replayedCounter < viewSize; i++, replayedCounter++) {
+            ChatMessage msg = (ChatMessage) buffer.get(i);
+
+            replacedMsgFormat = new String(replayMsgFormat);
+            replacedMsgHover = new String(replayMsgHover);
+            try {
+                replacedMsgFormat = replaceVariables(new String[]{msg.getPlayerName(), msg.getMessage(),
+                        msg.getTimestamp().toString()}, replacedMsgFormat);
+                replacedMsgHover = replaceVariables(new String[]{msg.getPlayerName(), msg.getMessage(),
+                        msg.getTimestamp().toString()}, replacedMsgHover);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+                return;
+            }
+            formattedMessage = new TextComponent(TextComponent.fromLegacyText(replacedMsgFormat));
+            formattedMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                    new ComponentBuilder(replacedMsgHover).create()));
+
+            player.spigot().sendMessage(formattedMessage);
+        }
+
+        player.sendMessage(footer.toLegacyText());
+
+        player.sendMessage("SHOW OLDER (TODO CLICK)"); // TODO
+
+        modifyPlayerIndex(player.getUniqueId(), getPlayerIndex(player.getUniqueId()), -replayedCounter);
+
+        logger.info("Replayed player '" + player.getDisplayName() + "' playerIndex: " + getPlayerIndex(player.getUniqueId()) + " replayedCounter: " + replayedCounter);
     }
 
     private String replaceVariables(String[] values, String str) throws IllegalArgumentException {
@@ -125,38 +128,52 @@ public class ChatBuffer {
         return str;
     }
 
-    private int getPlayerIndex(Player player) {
-        UUID uuid = player.getUniqueId();
-        if(playerIndex.containsKey(uuid)) {
+    private int getPlayerIndex(UUID uuid) {
+        if (playerIndex.containsKey(uuid)) {
             return playerIndex.get(uuid);
         }
-        return 0;
+        return bufferSize - 1;
     }
 
-    private void setPlayerIndex(Player player, int index) {
-        playerIndex.put(player.getUniqueId(), index);
+    private int getPlayerIndex(Player player) {
+        return getPlayerIndex(player.getUniqueId());
     }
 
-    private void modifyPlayerIndex(int modifier) {
-        for(Map.Entry<UUID, Integer> entry : playerIndex.entrySet()) {
-            int index = entry.getValue();
-            int result = index + modifier;
-            if(result < 0) {
-                // If index becomes invalid remove entry
-                playerIndex.remove(entry.getKey());
-            } else {
-                // Otherwise apply modifier
-                entry.setValue(result);
-            }
+
+    private void updatePlayerIndexes(int modifier) {
+        playerIndex.forEach((uuid, index) -> modifyPlayerIndex(uuid, index, modifier));
+    }
+
+    private void modifyPlayerIndex(UUID uuid, int index, int modifier) {
+        int result = index + modifier;
+
+        if (result < 0) {
+            // If index becomes invalid remove entry
+            playerIndex.remove(uuid);
+        } else {
+            // Otherwise apply modifier
+            playerIndex.put(uuid, result);
         }
+    }
+
+    public void resetPlayer(Player player) {
+        playerIndex.remove(player.getUniqueId());
+    }
+
+    public int getViewSize() {
+        return viewSize;
+    }
+
+    public void setViewSize(int viewSize) {
+        this.viewSize = viewSize;
     }
 
     public int getBufferSize() {
-        return bufferSize;
+        return maxBufferSize;
     }
 
-    public void setBufferSize(int bufferSize) {
-        this.bufferSize = bufferSize;
+    public void setBufferSize(int maxBufferSize) {
+        this.maxBufferSize = maxBufferSize;
     }
 
     public String getReplayHeader() {

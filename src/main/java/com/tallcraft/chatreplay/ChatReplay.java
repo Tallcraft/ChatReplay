@@ -27,6 +27,11 @@ public class ChatReplay extends JavaPlugin implements Listener {
 
         configureBuffer();
 
+        // FIXME DEBUG
+        for(int i = 0; i < 10; i++) {
+            chatBuffer.addMessage(new ChatMessage("Notch", Integer.toString(i+1)));
+        }
+
         getServer().getPluginManager().registerEvents(this, this);
     }
 
@@ -37,21 +42,45 @@ public class ChatReplay extends JavaPlugin implements Listener {
     }
 
 
+    // TODO: permissions for sub-commands
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-        reloadConfig();
 
-        configureBuffer();
-
-        logger.info(this.getName() + ": Reloaded configuration");
-        if (sender instanceof Player) {
-            sender.sendMessage(this.getName() + ": Reloaded configuration!");
+        if (args.length == 0) {
+            return false;
         }
-        return true;
+
+        if (args[0].equalsIgnoreCase("play") && sender instanceof Player) {
+            chatBuffer.playTo((Player) sender);
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("reload")) {
+            reloadConfig();
+            configureBuffer();
+
+            logger.info(this.getName() + ": Reloaded configuration");
+            if (sender instanceof Player) {
+                sender.sendMessage(this.getName() + ": Reloaded configuration!");
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    private void showUsage(CommandSender sender) {
+        if (sender instanceof Player) {
+            sender.sendMessage("Usage : /" + this.getName() + " <play|reload>");
+        } else {
+            logger.info(this.getName() + ": Usage: + " + this.getName() + " reload");
+        }
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (event.getPlayer().hasPermission("chatreplay.view")) {
+        Player player = event.getPlayer();
+        if (player.hasPermission("chatreplay.view")) {
+            chatBuffer.resetPlayer(player);
             chatBuffer.playTo(event.getPlayer());
         }
     }
@@ -61,7 +90,7 @@ public class ChatReplay extends JavaPlugin implements Listener {
      */
     private void configureBuffer() {
         int bufferSize = getConfig().getInt("bufferSize");
-        int viewSize = getConfig().getInt("bufferSize");
+        int viewSize = getConfig().getInt("viewSize");
 
         if (bufferSize <= 0) {
             throw new IllegalArgumentException(this.getName() + ": Invalid bufferSize " + bufferSize + "! Must be greater 0");
@@ -71,15 +100,17 @@ public class ChatReplay extends JavaPlugin implements Listener {
             throw new IllegalArgumentException(this.getName() + ": Invalid viewSize. Can not be smaller than total buffer size");
         }
 
-        if(chatBuffer == null) {
+        if (chatBuffer == null) {
             chatBuffer = new ChatBuffer(
                     bufferSize,
+                    viewSize,
                     getConfig().getString("replayHeader"),
                     getConfig().getString("replayFooter"),
                     getConfig().getString("replayMsgFormat"),
                     getConfig().getString("replayMsgHover"));
         } else {
             chatBuffer.setBufferSize(getConfig().getInt("bufferSize"));
+            chatBuffer.setViewSize(getConfig().getInt("viewSize"));
             chatBuffer.setReplayHeader(getConfig().getString("replayHeader"));
             chatBuffer.setReplayFooter(getConfig().getString("replayFooter"));
             chatBuffer.setReplayMsgFormat(getConfig().getString("replayMsgFormat"));
