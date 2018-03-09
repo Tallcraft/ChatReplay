@@ -1,5 +1,5 @@
 name: ChatReplay
-version: 1.4.0
+version: 1.4.1
 description: Replay chat history
 author: Tallcraft
 website: https://tallcraft.com
@@ -8,7 +8,7 @@ main: com.tallcraft.chatreplay.ChatReplay
 database: false
 commands:
  chatreplay:
-    usage: /chatreplay <play|more|reload>
+    usage: /chatreplay <play|more|reload|clear>
     permission-message: You do not have permission to use this command.
 permissions:
  chatreplay.*:
@@ -21,9 +21,13 @@ permissions:
    default: false
    children:
      chatreplay.reload: true
+     chatreplay.clear: true
      chatreplay.view: true
  chatreplay.reload:
    description: Reload plugin config
+   default: false
+ chatreplay.clear:
+   description: Clear chat buffer
    default: false
  chatreplay.view:
    description: View replayed chat including history on login and via command

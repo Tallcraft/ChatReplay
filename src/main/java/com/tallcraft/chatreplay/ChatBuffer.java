@@ -8,13 +8,14 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ChatBuffer {
     private List buffer;
     private int bufferSize; // How many messages are currently stored
     private int maxBufferSize; // Max size, How many messages to store + replay
 
-    private HashMap<UUID, Integer> playerIndex; // Store pos of last shown messages to player
+    private ConcurrentHashMap<UUID, Integer> playerIndex; // Store pos of last shown messages to player
     private int viewSize; // How many messages to show user at once
 
     private String replayHeader;
@@ -36,7 +37,7 @@ public class ChatBuffer {
         this.viewSize = viewSize;
 
         this.bufferSize = 0;
-        this.playerIndex = new HashMap<>();
+        this.playerIndex = new ConcurrentHashMap<>();
         this.buffer = Collections.synchronizedList(new ArrayList<ChatMessage>());
     }
 
@@ -165,6 +166,12 @@ public class ChatBuffer {
 
     public void resetPlayer(Player player) {
         playerIndex.remove(player.getUniqueId());
+    }
+
+    public void clear() {
+        buffer.clear();
+        playerIndex.clear();
+        bufferSize = 0;
     }
 
     public int getViewSize() {
