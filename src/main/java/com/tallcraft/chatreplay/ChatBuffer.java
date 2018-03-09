@@ -114,7 +114,7 @@ public class ChatBuffer {
         }
 
         // Update player index for pagination
-        modifyPlayerIndex(player.getUniqueId(), getPlayerIndex(player.getUniqueId()), -replayedCounter);
+        modifyPlayerIndex(player.getUniqueId(), playerIndex, -replayedCounter);
 
 //        logger.info("Replayed player '" + player.getDisplayName() + "' playerIndex: " + getPlayerIndex(player.getUniqueId()) + " replayedCounter: " + replayedCounter);
     }
