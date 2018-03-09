@@ -143,6 +143,20 @@ public class ChatReplay extends JavaPlugin implements Listener {
             return true;
         }
 
+        if(args[0].equalsIgnoreCase("clear")) {
+            if(!sender.hasPermission("chatreplay.clear")) {
+                sender.sendMessage(cmd.getPermissionMessage());
+                return true;
+            }
+
+            chatBuffer.clear();
+            logger.info(this.getName() + ": Cleared chat buffer.");
+            if(sender instanceof Player) {
+                sender.sendMessage(this.getName() + ": Cleared chat buffer.");
+            }
+            return true;
+        }
+
         return false;
     }
 

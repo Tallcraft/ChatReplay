@@ -21,9 +21,13 @@ permissions:
    default: false
    children:
      chatreplay.reload: true
+     chatreplay.clear: true
      chatreplay.view: true
  chatreplay.reload:
    description: Reload plugin config
+   default: false
+ chatreplay.clear:
+   description: Clear chat buffer
    default: false
  chatreplay.view:
    description: View replayed chat including history on login and via command

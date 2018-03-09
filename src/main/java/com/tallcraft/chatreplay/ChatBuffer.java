@@ -168,6 +168,12 @@ public class ChatBuffer {
         playerIndex.remove(player.getUniqueId());
     }
 
+    public void clear() {
+        buffer.clear();
+        playerIndex.clear();
+        bufferSize = 0;
+    }
+
     public int getViewSize() {
         return viewSize;
     }
