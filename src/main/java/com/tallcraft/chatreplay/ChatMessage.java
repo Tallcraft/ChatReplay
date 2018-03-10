@@ -1,6 +1,7 @@
 package com.tallcraft.chatreplay;
 
 import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
 import java.util.Date;
 
 public class ChatMessage {
@@ -20,6 +21,10 @@ public class ChatMessage {
         this.playerName = playerName;
         this.message = message;
         this.timestamp = timestamp;
+    }
+
+    public ChatMessage(String playerName, String message, OffsetDateTime offsetTimestamp) {
+        this(playerName, message, new Date(offsetTimestamp.toInstant().toEpochMilli()));
     }
 
     public Date getTimestamp() {

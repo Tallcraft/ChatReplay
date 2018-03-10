@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import github.scarsz.discordsrv.DiscordSRV;
 
 import java.util.logging.Logger;
 
@@ -19,6 +20,8 @@ public class ChatReplay extends JavaPlugin implements Listener {
     private static final Logger logger = Logger.getLogger("minecraft");
     private ChatBuffer chatBuffer;
     private FileConfiguration config;
+    private DiscordSRVListener discordsrvListener;
+    private boolean discordInstalled = isClass("github.scarsz.discordsrv.DiscordSRV");
 
     @Override
     public void onEnable() {
@@ -38,9 +41,31 @@ public class ChatReplay extends JavaPlugin implements Listener {
 //            chatBuffer.addMessage(new ChatMessage("Notch", Integer.toString(i + 1)));
 //        }
 
+        // Listen for DiscordSRV Messages if the plugin is installed
+        if(discordInstalled) {
+            logger.info(this.getName() + ": DiscordSRV installed. Recording messages.");
+
+            // Initialize listener for DiscordSRV messages
+            discordsrvListener = new DiscordSRVListener(
+                    chatBuffer,
+                    config.getBoolean("recordDiscordSRV"));
+
+            // Subscribe to DiscordSRV messages
+            DiscordSRV.api.subscribe(discordsrvListener);
+        }
+
         // Register events to listen for chat, command and player join
         getServer().getPluginManager().registerEvents(this, this);
     }
+
+    @Override
+    public void onDisable() {
+        if(discordInstalled) {
+            // Unsubscribe from DiscordSRV messages
+            DiscordSRV.api.unsubscribe(discordsrvListener);
+        }
+    }
+
 
     private void initConfig() {
         // Get config object for "config.yml"
@@ -50,6 +75,9 @@ public class ChatReplay extends JavaPlugin implements Listener {
                 "\n" +
                 " Should messages be automatically re-played on login?\n" +
                 "   replayOnLogin\n" +
+                "\n" +
+                " If installed, should DiscordSRV messages be recorded?\n" +
+                "   recordDiscordSRV\n" +
                 "\n" +
                 " Chat Buffer Options:\n" +
                 "\n" +
@@ -77,6 +105,7 @@ public class ChatReplay extends JavaPlugin implements Listener {
 
         MemoryConfiguration defaultConfig = new MemoryConfiguration();
         defaultConfig.set("replayOnLogin", true);
+        defaultConfig.set("recordDiscordSRV", false);
         defaultConfig.set("bufferSize", 500);
         defaultConfig.set("viewSize", 70);
         defaultConfig.set("timestampFormat", "yyyy-MM-dd HH:mm");
@@ -94,7 +123,11 @@ public class ChatReplay extends JavaPlugin implements Listener {
 
     @EventHandler
     public void AsyncPlayerChatEvent(AsyncPlayerChatEvent event) {
-        chatBuffer.addMessage(new ChatMessage(ChatColor.stripColor(event.getPlayer().getDisplayName()), ChatColor.stripColor(event.getMessage())));
+        chatBuffer.addMessage(
+                new ChatMessage(
+                        ChatColor.stripColor(event.getPlayer().getDisplayName()),
+                        ChatColor.stripColor(event.getMessage())
+                ));
     }
 
 
@@ -135,6 +168,11 @@ public class ChatReplay extends JavaPlugin implements Listener {
             reloadConfig();
             initConfig();
             configureBuffer();
+
+            // If the DiscordSRV option has been disabled stop recording messages from it
+            if(discordInstalled) {
+                discordsrvListener.setEnabled(config.getBoolean("recordDiscordSRV"));
+            }
 
             logger.info(this.getName() + ": Reloaded configuration");
             if (sender instanceof Player) {
@@ -211,6 +249,15 @@ public class ChatReplay extends JavaPlugin implements Listener {
             chatBuffer.setReplayMsgFormat(replayMsgFormat);
             chatBuffer.setReplayMsgHover(replayMsgHover);
             chatBuffer.setNavigateHistoryButtonText(navigateHistoryButtonText);
+        }
+    }
+
+    public boolean isClass(String className) {
+        try  {
+            Class.forName(className);
+            return true;
+        }  catch (ClassNotFoundException e) {
+            return false;
         }
     }
 }

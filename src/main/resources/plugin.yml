@@ -6,6 +6,7 @@ website: https://tallcraft.com
 
 main: com.tallcraft.chatreplay.ChatReplay
 database: false
+softdepend: [DiscordSRV]
 commands:
  chatreplay:
     usage: /chatreplay <play|more|reload|clear>
