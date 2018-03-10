@@ -5,11 +5,10 @@ import java.time.OffsetDateTime;
 import java.util.Date;
 
 public class ChatMessage {
+    public static String timestampFormat = "yyyy-MM-dd HH:mm";
     private String playerName;
     private String message;
     private Date timestamp;
-
-    public static String timestampFormat = "yyyy-MM-dd HH:mm";
 
     public ChatMessage(String playerName, String message) {
         this.playerName = playerName;
@@ -31,18 +30,18 @@ public class ChatMessage {
         return timestamp;
     }
 
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
     public String getTimestampFormatted() {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat(timestampFormat);
             return formatter.format(this.timestamp);
-        } catch(NullPointerException | IllegalArgumentException ex) {
+        } catch (NullPointerException | IllegalArgumentException ex) {
             // In case invalid formatStr is provided, fall back to native toString
             return this.timestamp.toString();
         }
-    }
-
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
     }
 
     public String getMessage() {

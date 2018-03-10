@@ -1,5 +1,6 @@
 package com.tallcraft.chatreplay;
 
+import github.scarsz.discordsrv.DiscordSRV;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -12,7 +13,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import github.scarsz.discordsrv.DiscordSRV;
 
 import java.util.logging.Logger;
 
@@ -42,7 +42,7 @@ public class ChatReplay extends JavaPlugin implements Listener {
 //        }
 
         // Listen for DiscordSRV Messages if the plugin is installed
-        if(discordInstalled) {
+        if (discordInstalled) {
             logger.info(this.getName() + ": DiscordSRV installed. Recording messages.");
 
             // Initialize listener for DiscordSRV messages
@@ -60,7 +60,7 @@ public class ChatReplay extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        if(discordInstalled) {
+        if (discordInstalled) {
             // Unsubscribe from DiscordSRV messages
             DiscordSRV.api.unsubscribe(discordsrvListener);
         }
@@ -170,7 +170,7 @@ public class ChatReplay extends JavaPlugin implements Listener {
             configureBuffer();
 
             // If the DiscordSRV option has been disabled stop recording messages from it
-            if(discordInstalled) {
+            if (discordInstalled) {
                 discordsrvListener.setEnabled(config.getBoolean("recordDiscordSRV"));
             }
 
@@ -181,15 +181,15 @@ public class ChatReplay extends JavaPlugin implements Listener {
             return true;
         }
 
-        if(args[0].equalsIgnoreCase("clear")) {
-            if(!sender.hasPermission("chatreplay.clear")) {
+        if (args[0].equalsIgnoreCase("clear")) {
+            if (!sender.hasPermission("chatreplay.clear")) {
                 sender.sendMessage(cmd.getPermissionMessage());
                 return true;
             }
 
             chatBuffer.clear();
             logger.info(this.getName() + ": Cleared chat buffer.");
-            if(sender instanceof Player) {
+            if (sender instanceof Player) {
                 sender.sendMessage(this.getName() + ": Cleared chat buffer.");
             }
             return true;
@@ -253,10 +253,10 @@ public class ChatReplay extends JavaPlugin implements Listener {
     }
 
     public boolean isClass(String className) {
-        try  {
+        try {
             Class.forName(className);
             return true;
-        }  catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             return false;
         }
     }
