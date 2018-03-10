@@ -43,12 +43,12 @@ public class ChatReplay extends JavaPlugin implements Listener {
 
         // Listen for DiscordSRV Messages if the plugin is installed
         if (discordInstalled) {
-            logger.info(this.getName() + ": DiscordSRV installed. Recording messages.");
+            boolean enabled = config.getBoolean("recordDiscordSRV");
+
+            if(enabled) logger.info(this.getName() + ": DiscordSRV installed. Recording messages.");
 
             // Initialize listener for DiscordSRV messages
-            discordsrvListener = new DiscordSRVListener(
-                    chatBuffer,
-                    config.getBoolean("recordDiscordSRV"));
+            discordsrvListener = new DiscordSRVListener(chatBuffer, enabled);
 
             // Subscribe to DiscordSRV messages
             DiscordSRV.api.subscribe(discordsrvListener);
