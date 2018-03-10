@@ -58,7 +58,7 @@ public class ChatBuffer {
 
 
     public void playTo(Player player) {
-        if (bufferSize == 0) {//Only replay if there is data
+        if (bufferSize == 0) {//Only replay if there is data TODO: Add custom message for "no data"
             return;
         }
 
