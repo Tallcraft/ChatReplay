@@ -1,5 +1,6 @@
 package com.tallcraft.chatreplay;
 
+import github.scarsz.discordsrv.DiscordSRV;
 import github.scarsz.discordsrv.api.ListenerPriority;
 import github.scarsz.discordsrv.api.Subscribe;
 import github.scarsz.discordsrv.api.events.DiscordGuildMessageReceivedEvent;
@@ -17,16 +18,24 @@ public class DiscordSRVListener {
         this.enabled = enabled;
     }
 
-    // TODO: Currently records all channels, allow user to configure, do not record console channels
+    // TODO: Currently only records main channel, allow user to configure
     @Subscribe(priority = ListenerPriority.MONITOR)
     public void discordMessageReceived(DiscordGuildMessageReceivedEvent event) {
-        if(enabled) {
-            chatBuffer.addMessage(
-                    new ChatMessage(
-                            event.getAuthor().getName(),
-                            event.getMessage().getStrippedContent(),
-                            event.getMessage().getCreationTime()
-                    ));
+        if (enabled) {
+
+            boolean isMainChannel = DiscordSRV.getPlugin().getMainTextChannel().getId()
+                    .equals(event.getChannel().getId());
+
+            // Only record messages for the main channel
+            if (isMainChannel) {
+                chatBuffer.addMessage(
+                        new ChatMessage(
+                                event.getAuthor().getName(),
+                                event.getMessage().getStrippedContent(),
+                                event.getMessage().getCreationTime()
+                        ));
+            }
+
         }
     }
 
