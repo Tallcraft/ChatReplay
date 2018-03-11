@@ -17,7 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.logging.Logger;
 
 public class ChatReplay extends JavaPlugin implements Listener {
-    private static final Logger logger = Logger.getLogger("minecraft");
+    private static final Logger logger = Logger.getLogger(this.getName());
     private ChatBuffer chatBuffer;
     private FileConfiguration config;
     private DiscordSRVListener discordsrvListener;
@@ -45,7 +45,7 @@ public class ChatReplay extends JavaPlugin implements Listener {
         if (discordInstalled) {
             boolean enabled = config.getBoolean("recordDiscordSRV");
 
-            if(enabled) logger.info(this.getName() + ": DiscordSRV installed. Recording messages.");
+            if(enabled) logger.info("DiscordSRV installed. Recording messages.");
 
             // Initialize listener for DiscordSRV messages
             discordsrvListener = new DiscordSRVListener(chatBuffer, enabled);
@@ -174,7 +174,7 @@ public class ChatReplay extends JavaPlugin implements Listener {
                 discordsrvListener.setEnabled(config.getBoolean("recordDiscordSRV"));
             }
 
-            logger.info(this.getName() + ": Reloaded configuration");
+            logger.info("Reloaded configuration");
             if (sender instanceof Player) {
                 sender.sendMessage(this.getName() + ": Reloaded configuration!");
             }
@@ -188,7 +188,7 @@ public class ChatReplay extends JavaPlugin implements Listener {
             }
 
             chatBuffer.clear();
-            logger.info(this.getName() + ": Cleared chat buffer.");
+            logger.info("Cleared chat buffer.");
             if (sender instanceof Player) {
                 sender.sendMessage(this.getName() + ": Cleared chat buffer.");
             }
