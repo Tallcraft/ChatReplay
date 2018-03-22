@@ -1,0 +1,22 @@
+ChatReplay Configuration
+ Should messages be automatically re-played on login?
+   replayOnLogin
+ If installed, should DiscordSRV messages be recorded?
+   recordDiscordSRV
+ Chat Buffer Options:
+   bufferSize: How many of the most recent chat messages to store in total
+   viewSize: How many messages to show players at once. Vanilla Minecraft Client has a history limit of around 100
+ Messages
+   Format of timestamp string. Do not use color / formatting codes.
+   Format instructions: https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
+     timestampFormat
+   Header and footer message of replay output
+   Available variables: {{msgCount}}
+     replayHeader
+     replayFooter
+   Formatting for single messages replayed
+   Available variables: {{player}}, {{message}}, {{timestamp}}
+     replayMsgFormat
+     replayMsgHover
+   Button to navigate chat history
+      navigateHistoryButtonText);

@@ -14,10 +14,12 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.util.Scanner;
 import java.util.logging.Logger;
 
 public class ChatReplay extends JavaPlugin implements Listener {
-    private static final Logger logger = Logger.getLogger(this.getName());
+    private final Logger logger = Logger.getLogger(this.getName());
     private ChatBuffer chatBuffer;
     private FileConfiguration config;
     private DiscordSRVListener discordsrvListener;
@@ -71,37 +73,10 @@ public class ChatReplay extends JavaPlugin implements Listener {
         // Get config object for "config.yml"
         config = this.getConfig();
 
-        config.options().header("ChatReplay Configuration\n" +
-                "\n" +
-                " Should messages be automatically re-played on login?\n" +
-                "   replayOnLogin\n" +
-                "\n" +
-                " If installed, should DiscordSRV messages be recorded?\n" +
-                "   recordDiscordSRV\n" +
-                "\n" +
-                " Chat Buffer Options:\n" +
-                "\n" +
-                "   bufferSize: How many of the most recent chat messages to store in total\n" +
-                "   viewSize: How many messages to show players at once. Vanilla Minecraft Client has a history limit of around 100\n" +
-                "\n" +
-                " Messages\n" +
-                "\n" +
-                "   Format of timestamp string. Do not use color / formatting codes.\n" +
-                "   Format instructions: https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html\n" +
-                "     timestampFormat\n" +
-                "\n" +
-                "   Header and footer message of replay output\n" +
-                "   Available variables: {{msgCount}}\n" +
-                "     replayHeader\n" +
-                "     replayFooter\n" +
-                "\n" +
-                "   Formatting for single messages replayed\n" +
-                "   Available variables: {{player}}, {{message}}, {{timestamp}}\n" +
-                "     replayMsgFormat\n" +
-                "     replayMsgHover\n" +
-                "\n" +
-                "   Button to navigate chat history\n" +
-                "      navigateHistoryButtonText");
+        // Read config header from external file and set it
+        String header = new Scanner(this.getResource("configHeader"))
+                .useDelimiter("\\Z").next();
+        config.options().header(header);
 
         MemoryConfiguration defaultConfig = new MemoryConfiguration();
         defaultConfig.set("replayOnLogin", true);
