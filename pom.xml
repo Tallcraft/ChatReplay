@@ -6,7 +6,7 @@
 
     <groupId>com.tallcraft</groupId>
     <artifactId>ChatReplay</artifactId>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.5.1-SNAPSHOT</version>
 
     <name>ChatReplay</name>
     
@@ -26,7 +26,7 @@
         <dependency>
             <groupId>github.scarsz.discordsrv</groupId>
             <artifactId>DiscordSRV</artifactId>
-            <version>16.0</version>
+            <version>1.16.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

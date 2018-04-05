@@ -31,7 +31,7 @@ public class DiscordSRVListener {
                 chatBuffer.addMessage(
                         new ChatMessage(
                                 event.getAuthor().getName(),
-                                event.getMessage().getStrippedContent(),
+                                event.getMessage().getContentStripped(),
                                 event.getMessage().getCreationTime()
                         ));
             }
