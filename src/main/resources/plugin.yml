@@ -1,8 +1,9 @@
 name: ChatReplay
-version: 1.5.1
+version: 2.0.0
 description: Replay chat history
 author: Tallcraft
 website: https://tallcraft.com
+api-version: 1.13
 
 main: com.tallcraft.chatreplay.ChatReplay
 database: false
