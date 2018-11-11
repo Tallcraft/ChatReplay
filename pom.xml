@@ -6,15 +6,21 @@
 
     <groupId>com.tallcraft</groupId>
     <artifactId>ChatReplay</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.1-SNAPSHOT</version>
 
     <name>ChatReplay</name>
-    
+
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.13-pre7-R0.1-SNAPSHOT</version>
+            <version>1.13.2-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>1.13.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -24,9 +30,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>github.scarsz.discordsrv</groupId>
-            <artifactId>DiscordSRV</artifactId>
-            <version>1.16.1</version>
+            <groupId>com.discordsrv</groupId>
+            <artifactId>discordsrv</artifactId>
+            <version>1.16.4</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -41,8 +47,12 @@
             <url>http://repo.bstats.org/content/repositories/releases/</url>
         </repository>
         <repository>
-            <id>Scarsz-Jenkins</id>
-            <url>https://ci.scarsz.me/plugin/repository/everything/</url>
+            <id>Scarsz-Nexus</id>
+            <url>https://nexus.scarsz.me/content/groups/public/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
         </repository>
     </repositories>
 
