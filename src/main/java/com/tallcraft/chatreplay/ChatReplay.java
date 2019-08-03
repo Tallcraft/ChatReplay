@@ -98,6 +98,8 @@ public class ChatReplay extends JavaPlugin implements Listener {
 
     @EventHandler
     public void AsyncPlayerChatEvent(AsyncPlayerChatEvent event) {
+        if(event.isCancelled())
+            return;
         chatBuffer.addMessage(
                 new ChatMessage(
                         ChatColor.stripColor(event.getPlayer().getDisplayName()),
