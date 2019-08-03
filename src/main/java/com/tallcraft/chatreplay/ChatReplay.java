@@ -9,12 +9,12 @@ import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
@@ -31,17 +31,11 @@ public class ChatReplay extends JavaPlugin implements Listener {
         //Metrics powered by bstats.org
         Metrics metrics = new Metrics(this);
 
-
         // Set up configuration
         initConfig(); //  Update config file if options are missing
 
         // Load config options and initialize buffer
         configureBuffer();
-
-        // Insert messages for testing
-//        for (int i = 0; i < 500; i++) {
-//            chatBuffer.addMessage(new ChatMessage("Notch", Integer.toString(i + 1)));
-//        }
 
         // Listen for DiscordSRV Messages if the plugin is installed
         if (discordInstalled) {
@@ -96,8 +90,11 @@ public class ChatReplay extends JavaPlugin implements Listener {
     }
 
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void AsyncPlayerChatEvent(AsyncPlayerChatEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
         chatBuffer.addMessage(
                 new ChatMessage(
                         ChatColor.stripColor(event.getPlayer().getDisplayName()),
@@ -107,7 +104,6 @@ public class ChatReplay extends JavaPlugin implements Listener {
 
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-
         if (args.length == 0) {
             return false;
         }
@@ -227,7 +223,7 @@ public class ChatReplay extends JavaPlugin implements Listener {
         }
     }
 
-    public boolean isClass(String className) {
+    private boolean isClass(String className) {
         try {
             Class.forName(className);
             return true;
