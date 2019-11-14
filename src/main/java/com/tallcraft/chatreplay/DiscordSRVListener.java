@@ -32,7 +32,7 @@ public class DiscordSRVListener {
                         new ChatMessage(
                                 event.getAuthor().getName(),
                                 event.getMessage().getContentStripped(),
-                                event.getMessage().getCreationTime()
+                                event.getMessage().getTimeCreated()
                         ));
             }
 
