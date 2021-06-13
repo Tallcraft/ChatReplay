@@ -1,0 +1,22 @@
+name: Build
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up JDK 16
+        uses: actions/setup-java@v1
+        with:
+          java-version: 16
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+      - name: Dev Build Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ChatReplay
+          path: /home/runner/work/ChatReplay/ChatReplay/target/ChatReplay*.jar
