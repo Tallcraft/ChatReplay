@@ -5,6 +5,7 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -14,7 +15,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.StringUtil;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
@@ -167,6 +171,30 @@ public class ChatReplay extends JavaPlugin implements Listener {
         }
 
         return false;
+    }
+
+    public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
+        // the user is typing the desired subcommand
+        if(args.length == 1) {
+            // subcommands the user has permission to use
+            List<String> subcommands = new LinkedList<>();
+            // player-only subcommands
+            if(sender instanceof Player) {
+                if(sender.hasPermission("chatreplay.play")) 
+                    subcommands.add("play");
+                if(sender.hasPermission("chatreplay.more"))
+                    subcommands.add("more");
+            }
+            if(sender.hasPermission("chatreplay.reload"))
+                subcommands.add("reload");
+            if(sender.hasPermission("chareplat.clear"))
+                subcommands.add("clear");
+            List<String> matches = new LinkedList<>();
+            // partial matches to make life easier
+            StringUtil.copyPartialMatches(args[0], subcommands, matches);
+            return matches;
+        }
+        return null;
     }
 
     @EventHandler
