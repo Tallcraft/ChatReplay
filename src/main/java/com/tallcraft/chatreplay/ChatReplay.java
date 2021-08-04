@@ -5,7 +5,6 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -187,7 +186,7 @@ public class ChatReplay extends JavaPlugin implements Listener {
             }
             if(sender.hasPermission("chatreplay.reload"))
                 subcommands.add("reload");
-            if(sender.hasPermission("chareplat.clear"))
+            if(sender.hasPermission("chatreplay.clear"))
                 subcommands.add("clear");
             List<String> matches = new LinkedList<>();
             // partial matches to make life easier
