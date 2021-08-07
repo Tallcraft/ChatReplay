@@ -173,27 +173,26 @@ public class ChatReplay extends JavaPlugin implements Listener {
     }
 
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-        // the user is typing the desired subcommand
-        if(args.length == 1) {
-            // subcommands the user has permission to use
-            List<String> subcommands = new LinkedList<>();
-            // player-only subcommands
-            if(sender instanceof Player) {
-                if(sender.hasPermission("chatreplay.play")) 
-                    subcommands.add("play");
-                if(sender.hasPermission("chatreplay.more"))
-                    subcommands.add("more");
-            }
-            if(sender.hasPermission("chatreplay.reload"))
-                subcommands.add("reload");
-            if(sender.hasPermission("chatreplay.clear"))
-                subcommands.add("clear");
-            List<String> matches = new LinkedList<>();
-            // partial matches to make life easier
-            StringUtil.copyPartialMatches(args[0], subcommands, matches);
-            return matches;
+        // return early if the user isn't typing a subcommand
+        if(args.length != 1)
+            return null;
+        // subcommands the user has permission to use
+        List<String> subcommands = new LinkedList<>();
+        // player-only subcommands
+        if(sender instanceof Player) {
+            if(sender.hasPermission("chatreplay.play")) 
+                subcommands.add("play");
+            if(sender.hasPermission("chatreplay.more"))
+                subcommands.add("more");
         }
-        return null;
+        if(sender.hasPermission("chatreplay.reload"))
+            subcommands.add("reload");
+        if(sender.hasPermission("chatreplay.clear"))
+            subcommands.add("clear");
+        List<String> matches = new LinkedList<>();
+        // partial matches to make life easier
+        StringUtil.copyPartialMatches(args[0], subcommands, matches);
+        return matches;
     }
 
     @EventHandler
