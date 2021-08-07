@@ -179,15 +179,15 @@ public class ChatReplay extends JavaPlugin implements Listener {
         // subcommands the user has permission to use
         List<String> subcommands = new LinkedList<>();
         // player-only subcommands
-        if(sender instanceof Player) {
-            if(sender.hasPermission("chatreplay.play")) 
+        if (sender instanceof Player) {
+            if (sender.hasPermission("chatreplay.play"))
                 subcommands.add("play");
-            if(sender.hasPermission("chatreplay.more"))
+            if (sender.hasPermission("chatreplay.more"))
                 subcommands.add("more");
         }
-        if(sender.hasPermission("chatreplay.reload"))
+        if (sender.hasPermission("chatreplay.reload"))
             subcommands.add("reload");
-        if(sender.hasPermission("chatreplay.clear"))
+        if (sender.hasPermission("chatreplay.clear"))
             subcommands.add("clear");
         List<String> matches = new LinkedList<>();
         // partial matches to make life easier
