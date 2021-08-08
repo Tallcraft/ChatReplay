@@ -14,7 +14,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.StringUtil;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
@@ -167,6 +170,29 @@ public class ChatReplay extends JavaPlugin implements Listener {
         }
 
         return false;
+    }
+
+    public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
+        // return early if the user isn't typing a subcommand
+        if(args.length != 1)
+            return null;
+        // subcommands the user has permission to use
+        List<String> subcommands = new LinkedList<>();
+        // player-only subcommands
+        if (sender instanceof Player) {
+            if (sender.hasPermission("chatreplay.play"))
+                subcommands.add("play");
+            if (sender.hasPermission("chatreplay.more"))
+                subcommands.add("more");
+        }
+        if (sender.hasPermission("chatreplay.reload"))
+            subcommands.add("reload");
+        if (sender.hasPermission("chatreplay.clear"))
+            subcommands.add("clear");
+        List<String> matches = new LinkedList<>();
+        // partial matches to make life easier
+        StringUtil.copyPartialMatches(args[0], subcommands, matches);
+        return matches;
     }
 
     @EventHandler
